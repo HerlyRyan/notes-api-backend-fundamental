@@ -1,0 +1,105 @@
+import { nanoid } from 'nanoid';
+import notes from './notes.js';
+
+export const createNote = (req, res) => {
+  // determine data
+  const { title = 'untitled', tags, body } = req.body;
+  const id = nanoid(16);
+  const createdAt = new Date().toISOString();
+  const updatedAt = createdAt;
+
+  // assign data to new object note
+  const newNote = {
+    id,
+    title,
+    tags,
+    body,
+    createdAt,
+    updatedAt,
+  };
+
+  // push to notes database
+  notes.push(newNote);
+
+  // check the new data is success push to the notes database
+  const isSuccess = notes.filter((note) => note.id === id).length > 0;
+
+  if (isSuccess) {
+    return res.status(201).json({
+      status: 'success',
+      message: 'Catatan berhasil ditambahkan',
+      data: { noteId: id },
+    });
+  }
+
+  return res.status(500).json({
+    status: 'fail',
+    message: 'Catatan gagal ditambahkan',
+  });
+};
+
+export const getNotes = (_, res) => {
+  return res.status(200).json({
+    status: 'success',
+    message: 'Data catatan berhasil diambil',
+    data: {
+      notes: notes,
+    },
+  });
+};
+
+export const getNoteById = (req, res) => {
+  const { id } = req.params;
+
+  const note = notes.find((note) => note.id === id);
+  if (note) {
+    return res.status(200).json({
+      status: 'success',
+      message: 'Catatan ditemukan',
+      data: { note: note },
+    });
+  }
+
+  return res.status(404).json({
+    status: 'fail',
+    message: 'Catatan tidak ditemukan',
+  });
+};
+
+export const editNoteById = (req, res) => {
+  const { id } = req.params;
+  const { title, tags, body } = req.body;
+  const updatedAt = new Date().toISOString();
+
+  const index = notes.findIndex((n) => n.id === id);
+  if (index !== -1) {
+    notes[index] = { ...notes[index], title, tags, body, updatedAt };
+    return res.status(200).json({
+      status: 'success',
+      message: 'Catatan berhasil diperbarui',
+    });
+  }
+
+  return res.status(404).json({
+    status: 'fail',
+    message: 'Gagal memperbarui catatan. Id tidak ditemukan',
+  });
+};
+
+export const deleteNoteById = (req, res) => {
+  const { id } = req.params;
+  const index = notes.findIndex((n) => n.id === id);
+
+  if (index !== -1) {
+    notes.splice(index, 1);
+    return res.status(200).json({
+      status: 'success',
+      message: 'Catatan berhasil dihapus',
+    });
+  }
+
+  return res.status(404).json({
+    status: 'fail',
+    message: 'Gagal menghapus catatan. Id tidak ditemukan',
+  });
+};
