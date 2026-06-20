@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 import notes from './notes.js';
 import InvariantError from '../../exceptions/invariant-error.js';
 import { response } from 'express';
+import NotFoundError from '../../exceptions/not-found-error.js';
 
 export const createNote = (req, res, next) => {
   // determine data
@@ -43,22 +44,15 @@ export const getNotes = (_, res) => {
   });
 };
 
-export const getNoteById = (req, res) => {
+export const getNoteById = (req, res, next) => {
   const { id } = req.params;
 
   const note = notes.find((note) => note.id === id);
   if (note) {
-    return res.status(200).json({
-      status: 'success',
-      message: 'Catatan ditemukan',
-      data: { note: note },
-    });
+    return response(res, 200, 'Catatan ditemukan', { note: note });
   }
 
-  return res.status(404).json({
-    status: 'fail',
-    message: 'Catatan tidak ditemukan',
-  });
+  return next(new NotFoundError('Catatan tidak ditemukan'));
 };
 
 export const editNoteById = (req, res) => {
