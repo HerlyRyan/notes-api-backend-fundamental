@@ -1,7 +1,9 @@
 import { nanoid } from 'nanoid';
 import notes from './notes.js';
+import InvariantError from '../../exceptions/invariant-error.js';
+import { response } from 'express';
 
-export const createNote = (req, res) => {
+export const createNote = (req, res, next) => {
   // determine data
   const { title = 'untitled', tags, body } = req.body;
   const id = nanoid(16);
@@ -25,17 +27,10 @@ export const createNote = (req, res) => {
   const isSuccess = notes.filter((note) => note.id === id).length > 0;
 
   if (isSuccess) {
-    return res.status(201).json({
-      status: 'success',
-      message: 'Catatan berhasil ditambahkan',
-      data: { noteId: id },
-    });
+    return response(res, 201, 'Catatan berhasil ditambahkan', { noteId: id });
   }
 
-  return res.status(500).json({
-    status: 'fail',
-    message: 'Catatan gagal ditambahkan',
-  });
+  return next(new InvariantError('Catatan gagal ditambahkan'));
 };
 
 export const getNotes = (_, res) => {
