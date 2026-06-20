@@ -35,13 +35,7 @@ export const createNote = (req, res, next) => {
 };
 
 export const getNotes = (_, res) => {
-  return res.status(200).json({
-    status: 'success',
-    message: 'Data catatan berhasil diambil',
-    data: {
-      notes: notes,
-    },
-  });
+  return response(res, 200, 'Data catatan berhasil diambil', { notes: notes });
 };
 
 export const getNoteById = (req, res, next) => {
