@@ -55,7 +55,7 @@ export const getNoteById = (req, res, next) => {
   return next(new NotFoundError('Catatan tidak ditemukan'));
 };
 
-export const editNoteById = (req, res) => {
+export const editNoteById = (req, res, next) => {
   const { id } = req.params;
   const { title, tags, body } = req.body;
   const updatedAt = new Date().toISOString();
@@ -63,16 +63,10 @@ export const editNoteById = (req, res) => {
   const index = notes.findIndex((n) => n.id === id);
   if (index !== -1) {
     notes[index] = { ...notes[index], title, tags, body, updatedAt };
-    return res.status(200).json({
-      status: 'success',
-      message: 'Catatan berhasil diperbarui',
-    });
+    return response(res, 200, 'Catatan berhasil diperbarui', notes[index]);
   }
 
-  return res.status(404).json({
-    status: 'fail',
-    message: 'Gagal memperbarui catatan. Id tidak ditemukan',
-  });
+  return next(new NotFoundError('Gagal memperbarui catatan. Id tidak ditemukan'));
 };
 
 export const deleteNoteById = (req, res) => {
