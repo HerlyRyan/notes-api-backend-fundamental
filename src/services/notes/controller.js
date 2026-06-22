@@ -60,7 +60,7 @@ export const editNoteById = (req, res, next) => {
     return response(res, 200, 'Catatan berhasil diperbarui', notes[index]);
   }
 
-  return next(new NotFoundError('Gagal memperbarui catatan. Id tidak ditemukan'));
+  return next(new NotFoundError('Catatan tidak ditemukan'));
 };
 
 export const deleteNoteById = (req, res, next) => {
@@ -72,5 +72,5 @@ export const deleteNoteById = (req, res, next) => {
     return response(res, 200, 'Catatan berhasil dihapus');
   }
 
-  return next(new NotFoundError('Gagal menghapus catatan. Id tidak ditemukan'));
+  return next(new NotFoundError('Catatan tidak ditemukan'));
 };
