@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import notes from './notes.js';
 import InvariantError from '../../exceptions/invariant-error.js';
-import { response } from 'express';
+import response from '../../utils/response.js';
 import NotFoundError from '../../exceptions/not-found-error.js';
 
 export const createNote = (req, res, next) => {
