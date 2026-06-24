@@ -34,13 +34,22 @@ export const createNote = (req, res, next) => {
   return next(new InvariantError('Catatan gagal ditambahkan'));
 };
 
-export const getNotes = (_, res) => {
-  return response(res, 200, 'Data catatan berhasil diambil', { notes: notes });
+export const getNotes = (req, res, next) => {
+  const { title } = req.query;
+  if (title) {
+    const filteredNote = notes.filter((note) => note.title === title);
+    if (filteredNote.length === 0) {
+      return next(new NotFoundError('Catatan tidak ditemukan'));
+    }
+
+    return response(res, 200, 'success', { notes: filteredNote });
+  }
+
+  return response(res, 200, 'success', { notes: notes });
 };
 
 export const getNoteById = (req, res, next) => {
   const { id } = req.params;
-
   const note = notes.find((note) => note.id === id);
   if (note) {
     return response(res, 200, 'Catatan ditemukan', { note: note });
